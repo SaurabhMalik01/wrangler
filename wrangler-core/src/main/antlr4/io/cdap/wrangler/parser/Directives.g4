@@ -140,8 +140,9 @@ numberRange
  ;
 
 value
- : String | Number | Column | Bool
+ : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
  ;
+
 
 ecommand
  : '!' Identifier
@@ -252,6 +253,19 @@ Bool
  : 'true'
  | 'false'
  ;
+
+// New Lexer Rule for Byte Size tokens (e.g., 10KB, 1.5MB, 100GB)
+BYTE_SIZE : [0-9]+ ('.' [0-9]+)? BYTE_UNIT ;
+
+// Helper fragment for Byte Size units
+fragment BYTE_UNIT : 'B' | 'KB' | 'MB' | 'GB' ;
+
+// New Lexer Rule for Time Duration tokens (e.g., 150ms, 2s, 1.5m, 1h)
+TIME_DURATION : [0-9]+ ('.' [0-9]+)? TIME_UNIT ;
+
+// Helper fragment for Time Duration units
+fragment TIME_UNIT : 'ms' | 's' | 'm' | 'h' ;
+
 
 Number
  : Int ('.' Digit*)?
