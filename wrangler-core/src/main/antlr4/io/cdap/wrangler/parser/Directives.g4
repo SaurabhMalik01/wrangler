@@ -258,13 +258,26 @@ Bool
 BYTE_SIZE : [0-9]+ ('.' [0-9]+)? BYTE_UNIT ;
 
 // Helper fragment for Byte Size units
-fragment BYTE_UNIT : 'B' | 'KB' | 'MB' | 'GB' ;
+fragment BYTE_UNIT
+ : 'b' | 'B'          // bytes
+ | 'kb' | 'KB'        // kilobytes
+ | 'mb' | 'MB'        // megabytes
+ | 'gb' | 'GB'        // gigabytes
+ | 'tb' | 'TB'        // terabytes
+ | 'pb' | 'PB'        // petabytes
+ ;
 
 // New Lexer Rule for Time Duration tokens (e.g., 150ms, 2s, 1.5m, 1h)
 TIME_DURATION : [0-9]+ ('.' [0-9]+)? TIME_UNIT ;
 
 // Helper fragment for Time Duration units
-fragment TIME_UNIT : 'ms' | 's' | 'm' | 'h' ;
+fragment TIME_UNIT
+ : 'ms'               // milliseconds
+ | 's'                // seconds
+ | 'm'                // minutes
+ | 'h'                // hours
+ | 'd'                // days
+ ;
 
 
 Number
