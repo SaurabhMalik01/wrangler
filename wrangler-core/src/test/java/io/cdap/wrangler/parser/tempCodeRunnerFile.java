@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Tests {@link GrammarBasedParser}
  */
-public class TempCodeRunnerFile {
+public class tempCodeRunnerFile {
 
   @Test
   public void testBasic() throws Exception {

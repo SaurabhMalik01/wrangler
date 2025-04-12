@@ -17,3 +17,8 @@ In **Part A**, the focus was on setting up the **CDAP DataPrep Plugin** to enabl
 - **Batch Processing**: Ensured efficient handling of large datasets.
   
 
+## Changes Made
+
+- Added Javadoc comments to the `ByteSize` and `TimeDuration` classes.
+  - These comments provide better documentation for the classes and their methods, improving code readability and ensuring compliance with the Checkstyle configuration.
+  - This change resolves the missing Javadoc errors reported by Checkstyle.
