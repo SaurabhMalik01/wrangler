@@ -21,53 +21,89 @@ import com.google.gson.JsonPrimitive;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
- * This class represents a byte size in different units.
- * It provides methods to convert between units such as bytes, kilobytes, and megabytes.
+ * This class represents a byte size token in the directives language.
+ * It handles parsing of byte size values with units like KB, MB, GB, etc.
  */
 public class ByteSize implements Token {
-    private final long valueInBytes;
+    private static final Pattern BYTE_SIZE_PATTERN = Pattern.compile(
+            "^([-]?\\d+(?:\\.\\d+)?)\\s*(k|kb|m|mb|g|gb|t|tb|p|pb|b|byte|bytes)$",
+            Pattern.CASE_INSENSITIVE);
 
-    public ByteSize(String token) {
-        // Regex to match the value followed by the unit (e.g., 10KB, 5MB)
-        Pattern pattern = Pattern.compile("(\\d+)(KB|MB|GB|TB)");
-        Matcher matcher = pattern.matcher(token);
+    private final String rawValue;
+    private final double value;
+    private final String unit;
+    private final long bytes;
 
-        if (matcher.matches()) {
-            long value = Long.parseLong(matcher.group(1));
-            String unit = matcher.group(2);
+    public ByteSize(String rawValue) {
+        this.rawValue = rawValue;
 
-            // Convert the value to bytes based on the unit
-            switch (unit) {
-                case "KB":
-                    this.valueInBytes = value * 1024;
-                    break;
-                case "MB":
-                    this.valueInBytes = value * 1024 * 1024;
-                    break;
-                case "GB":
-                    this.valueInBytes = value * 1024 * 1024 * 1024;
-                    break;
-                case "TB":
-                    this.valueInBytes = value * 1024 * 1024 * 1024 * 1024;
-                    break;
-                default:
-                    this.valueInBytes = value; // Just in case an invalid unit is given
-                    break;
-            }
-        } else {
-            throw new IllegalArgumentException("Invalid ByteSize format: " + token);
+        // Parse the byte size string
+        Matcher matcher = BYTE_SIZE_PATTERN.matcher(rawValue.trim());
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid byte size format: " + rawValue);
+        }
+
+        this.value = Double.parseDouble(matcher.group(1));
+        this.unit = matcher.group(2).toLowerCase();
+        this.bytes = calculateBytes();
+    }
+
+    /**
+     * Calculates the number of bytes based on the value and unit.
+     *
+     * @return number of bytes
+     */
+    private long calculateBytes() {
+        switch (unit) {
+            case "k":
+            case "kb":
+                return (long) (value * 1024);
+            case "m":
+            case "mb":
+                return (long) (value * 1024 * 1024);
+            case "g":
+            case "gb":
+                return (long) (value * 1024 * 1024 * 1024);
+            case "t":
+            case "tb":
+                return (long) (value * 1024 * 1024 * 1024 * 1024);
+            case "p":
+            case "pb":
+                return (long) (value * 1024 * 1024 * 1024 * 1024 * 1024);
+            case "b":
+            case "byte":
+            case "bytes":
+            default:
+                return (long) value;
         }
     }
 
-    // Getter to retrieve the byte value
+    /**
+     * @return the value as a number of bytes
+     */
     public long getBytes() {
-        return valueInBytes;
+        return bytes;
+    }
+
+    /**
+     * @return the original numeric value before unit conversion
+     */
+    public double getValue() {
+        return value;
+    }
+
+    /**
+     * @return the unit part of the byte size (kb, mb, etc.)
+     */
+    public String getUnit() {
+        return unit;
     }
 
     @Override
     public Object value() {
-        return valueInBytes;
+        return rawValue;
     }
 
     @Override
@@ -77,7 +113,6 @@ public class ByteSize implements Token {
 
     @Override
     public JsonElement toJson() {
-        // Return the value in bytes as a JsonElement
-        return new JsonPrimitive(valueInBytes);
+        return new JsonPrimitive(rawValue);
     }
 }

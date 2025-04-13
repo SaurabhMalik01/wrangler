@@ -153,6 +153,8 @@ public enum TokenType implements Serializable {
    * on characters that can be present in a string.
    */
   IDENTIFIER,
-  BYTE_SIZE,
-  TIME_DURATION;
+
+  // New token type for time durations and for byte sizes
+  BYTE_SIZE,    
+  TIME_DURATION 
 }

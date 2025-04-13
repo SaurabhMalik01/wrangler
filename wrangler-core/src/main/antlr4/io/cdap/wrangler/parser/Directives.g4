@@ -64,6 +64,8 @@ directive
     | stringList
     | numberRanges
     | properties
+    | byteSize
+    | timeDuration
   )*?
   ;
 
@@ -128,7 +130,7 @@ propertyList
  ;
 
 property
- : Identifier '=' ( text | number | bool )
+ : Identifier '=' ( text | number | bool | byteSize | timeDuration )
  ;
 
 numberRanges
@@ -142,7 +144,6 @@ numberRange
 value
  : String | Number | Column | Bool | BYTE_SIZE | TIME_DURATION
  ;
-
 
 ecommand
  : '!' Identifier
@@ -166,6 +167,14 @@ number
 
 bool
  : Bool
+ ;
+
+byteSize
+ : BYTE_SIZE
+ ;
+
+timeDuration
+ : TIME_DURATION
  ;
 
 condition
@@ -254,34 +263,44 @@ Bool
  | 'false'
  ;
 
-// New Lexer Rule for Byte Size tokens (e.g., 10KB, 1.5MB, 100GB)
-BYTE_SIZE : [0-9]+ ('.' [0-9]+)? BYTE_UNIT ;
-
-// Helper fragment for Byte Size units
-fragment BYTE_UNIT
- : 'b' | 'B'          // bytes
- | 'kb' | 'KB'        // kilobytes
- | 'mb' | 'MB'        // megabytes
- | 'gb' | 'GB'        // gigabytes
- | 'tb' | 'TB'        // terabytes
- | 'pb' | 'PB'        // petabytes
- ;
-
-// New Lexer Rule for Time Duration tokens (e.g., 150ms, 2s, 1.5m, 1h)
-TIME_DURATION : [0-9]+ ('.' [0-9]+)? TIME_UNIT ;
-
-// Helper fragment for Time Duration units
-fragment TIME_UNIT
- : 'ms'               // milliseconds
- | 's'                // seconds
- | 'm'                // minutes
- | 'h'                // hours
- | 'd'                // days
- ;
-
-
 Number
  : Int ('.' Digit*)?
+ ;
+
+BYTE_SIZE
+ : Int ('.' Digit*)? BYTE_UNIT
+ ;
+
+TIME_DURATION
+ : Int ('.' Digit*)? TIME_UNIT
+ ;
+
+fragment BYTE_UNIT
+ : [kKmMgGtTpP][bB]?
+ | 'bytes'
+ | 'byte'
+ | 'b'
+ ;
+
+fragment TIME_UNIT
+ : 'ms'
+ | 's'
+ | 'm'
+ | 'min'
+ | 'h'
+ | 'hour'
+ | 'hours'
+ | 'd'
+ | 'day'
+ | 'days'
+ | 'w'
+ | 'week'
+ | 'weeks'
+ | 'month'
+ | 'months'
+ | 'y'
+ | 'year'
+ | 'years'
  ;
 
 Identifier
